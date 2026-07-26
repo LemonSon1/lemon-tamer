@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lemon Tamer</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0d0d0d;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+.container{
+    text-align:center;
+    animation:fade 1.5s ease;
+}
+
+h1{
+    font-size:4rem;
+    letter-spacing:4px;
+}
+
+p{
+    color:#888;
+    margin-top:15px;
+    font-size:1.1rem;
+}
+
+.line{
+    width:120px;
+    height:2px;
+    background:white;
+    margin:25px auto;
+    animation:grow 1.5s ease;
+}
+
+button{
+    margin-top:20px;
+    padding:12px 28px;
+    border:1px solid white;
+    background:transparent;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+button:hover{
+    background:white;
+    color:black;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes grow{
+    from{
+        width:0;
+    }
+    to{
+        width:120px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h1>LEMON TAMER</h1>
+
+    <div class="line"></div>
+
+    <p>Welcome to lemon-tamer.bond</p>
+
+    <button onclick="alert('Website successfully deployed! 🎉')">
+        Explore
+    </button>
+</div>
+
+</body>
+</html>
