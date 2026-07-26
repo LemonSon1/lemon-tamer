@@ -8,98 +8,214 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    background:#0d0d0d;
-    color:white;
-    font-family:Arial,Helvetica,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+background:#050505;
+overflow:hidden;
+color:white;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.background{
+position:fixed;
+width:100%;
+height:100%;
+background:
+radial-gradient(circle at 20% 20%,rgba(255,255,255,.08),transparent 25%),
+radial-gradient(circle at 80% 80%,rgba(255,255,255,.05),transparent 30%),
+linear-gradient(135deg,#000,#111,#000);
+animation:bgMove 18s linear infinite;
+}
+
+@keyframes bgMove{
+0%{transform:scale(1);}
+50%{transform:scale(1.1);}
+100%{transform:scale(1);}
+}
+
+.particle{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+opacity:.6;
+animation:float linear infinite;
+}
+
+@keyframes float{
+0%{
+transform:translateY(100vh);
+opacity:0;
+}
+10%{opacity:.7;}
+100%{
+transform:translateY(-10vh);
+opacity:0;
+}
 }
 
 .container{
-    text-align:center;
-    animation:fade 1.5s ease;
-}
-
-h1{
-    font-size:4rem;
-    letter-spacing:4px;
-}
-
-p{
-    color:#888;
-    margin-top:15px;
-    font-size:1.1rem;
-}
-
-.line{
-    width:120px;
-    height:2px;
-    background:white;
-    margin:25px auto;
-    animation:grow 1.5s ease;
-}
-
-button{
-    margin-top:20px;
-    padding:12px 28px;
-    border:1px solid white;
-    background:transparent;
-    color:white;
-    cursor:pointer;
-    font-size:16px;
-    transition:.3s;
-}
-
-button:hover{
-    background:white;
-    color:black;
+position:relative;
+z-index:10;
+text-align:center;
+animation:fade 1.4s ease;
+padding:40px;
 }
 
 @keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(25px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+from{
+opacity:0;
+transform:translateY(40px);
+}
+to{
+opacity:1;
+transform:none;
+}
 }
 
-@keyframes grow{
-    from{
-        width:0;
-    }
-    to{
-        width:120px;
-    }
+h1{
+font-size:72px;
+letter-spacing:10px;
+font-weight:700;
+}
+
+.line{
+width:0;
+height:2px;
+background:white;
+margin:25px auto;
+animation:lineGrow 1.2s forwards;
+animation-delay:.5s;
+}
+
+@keyframes lineGrow{
+to{
+width:180px;
+}
+}
+
+#typing{
+margin-top:20px;
+font-size:20px;
+color:#bdbdbd;
+min-height:28px;
+}
+
+.buttons{
+margin-top:40px;
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+button{
+padding:14px 34px;
+border:1px solid white;
+background:transparent;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:.35s;
+border-radius:999px;
+}
+
+button:hover{
+background:white;
+color:black;
+transform:translateY(-4px);
+box-shadow:0 0 30px rgba(255,255,255,.3);
+}
+
+footer{
+position:absolute;
+bottom:25px;
+width:100%;
+text-align:center;
+font-size:14px;
+color:#666;
+letter-spacing:2px;
+}
+
+@media(max-width:700px){
+h1{
+font-size:42px;
+letter-spacing:5px;
+}
+#typing{
+font-size:17px;
+}
 }
 </style>
-
 </head>
 
 <body>
 
+<div class="background"></div>
+
 <div class="container">
-    <h1>LEMON TAMER</h1>
 
-    <div class="line"></div>
+<h1>LEMON TAMER</h1>
 
-    <p>Welcome to lemon-tamer.bond</p>
+<div class="line"></div>
 
-    <button onclick="alert('Website successfully deployed! 🎉')">
-        Explore
-    </button>
+<div id="typing"></div>
+
+<div class="buttons">
+<button onclick="window.open('https://github.com/LemonSon1')">
+GitHub
+</button>
+
+<button onclick="location.reload()">
+Refresh
+</button>
 </div>
+
+</div>
+
+<footer>
+lemon-tamer.bond
+</footer>
+
+<script>
+
+const text="Building beautiful things on the web.";
+let i=0;
+
+function type(){
+if(i<text.length){
+document.getElementById("typing").innerHTML+=text.charAt(i);
+i++;
+setTimeout(type,55);
+}
+}
+
+type();
+
+for(let i=0;i<80;i++){
+
+const p=document.createElement("div");
+
+p.className="particle";
+
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=6+Math.random()*10+"s";
+p.style.animationDelay=Math.random()*8+"s";
+
+document.body.appendChild(p);
+
+}
+
+</script>
 
 </body>
 </html>
