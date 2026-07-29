@@ -1,71 +1,126 @@
-// -------------------------
-// Customizable loading text
-// -------------------------
-
 const loadingTexts = [
     "Initializing...",
     "Loading assets...",
     "Preparing interface...",
     "Optimizing experience...",
-    "Almost there..."
+    "Almost ready..."
 ];
 
-// Change text every x milliseconds
-const TEXT_INTERVAL = 2500;
-
-// Fake loading speed
-const SPEED = 0.35;
-
-// Maximum fill before resetting
-const MAX_PROGRESS = 97;
 
 const fill = document.querySelector(".loader-fill");
-const loadingText = document.getElementById("loading-text");
+const text = document.getElementById("loading-text");
+
+
+// -----------------------
+// Smooth non-linear loader
+// -----------------------
 
 let progress = 0;
-let lastTime = performance.now();
+let finished = false;
 
-// -------------------------
-// Loader animation
-// Uses requestAnimationFrame
-// so it PAUSES automatically
-// when browser tab is hidden.
-// -------------------------
+function load(time) {
 
-function animate(time) {
+    if (!finished) {
 
-    const delta = time - lastTime;
-    lastTime = time;
+        // slower with natural variation
+        progress += (Math.random() * 0.18) + 0.03;
 
-    progress += SPEED * delta / 16.67;
 
-    if (progress >= MAX_PROGRESS) {
-        progress = 0;
+        if(progress >= 100){
+
+            progress = 100;
+            finished = true;
+
+            text.textContent = "Complete";
+
+        }
+
+
+        fill.style.width = progress + "%";
     }
 
-    fill.style.width = progress + "%";
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(load);
 }
 
-requestAnimationFrame(animate);
 
-// -------------------------
-// Loading text rotation
-// -------------------------
+requestAnimationFrame(load);
 
-let textIndex = 0;
 
-setInterval(() => {
 
-    loadingText.style.opacity = 0;
+// -----------------------
+// Text changing
+// -----------------------
 
-    setTimeout(() => {
+let index = 0;
 
-        textIndex = (textIndex + 1) % loadingTexts.length;
-        loadingText.textContent = loadingTexts[textIndex];
-        loadingText.style.opacity = 1;
 
-    }, 180);
+setInterval(()=>{
 
-}, TEXT_INTERVAL);
+    if(finished) return;
+
+
+    text.style.opacity = 0;
+
+
+    setTimeout(()=>{
+
+        index++;
+
+        if(index >= loadingTexts.length)
+            index = 0;
+
+
+        text.textContent = loadingTexts[index];
+
+        text.style.opacity = 1;
+
+
+    },200);
+
+
+},2500);
+
+
+
+
+// -----------------------
+// Bubble generator
+// -----------------------
+
+function createBubble(){
+
+    const bubble = document.createElement("span");
+
+    bubble.className="bubble";
+
+
+    const size = Math.random()*5 + 5;
+
+    bubble.style.width=size+"px";
+    bubble.style.height=size+"px";
+
+
+    bubble.style.left =
+        Math.random()*100+"%";
+
+
+    bubble.style.animationDuration =
+        (Math.random()*4 + 5)+"s";
+
+
+    document
+        .querySelector(".bubbles")
+        .appendChild(bubble);
+
+
+    setTimeout(()=>{
+
+        bubble.remove();
+
+    },9000);
+
+}
+
+
+setInterval(createBubble,700);

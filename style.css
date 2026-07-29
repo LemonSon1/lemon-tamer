@@ -5,45 +5,119 @@
 }
 
 body {
-    background: #000;
-    color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
     height: 100vh;
+    overflow: hidden;
+    background: #000;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
 }
+
 
 .loader-wrapper {
     text-align: center;
+    position: relative;
+    z-index: 2;
 }
+
 
 .loader {
     width: 340px;
-    height: 12px;
-    border: 2px solid rgba(255,255,255,.9);
-    border-radius: 999px;
+    height: 7px;
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 20px;
     overflow: hidden;
-    transition: transform .25s ease;
+
+    transition: transform .3s ease;
 }
+
 
 .loader:hover {
     transform: scaleX(1.05);
 }
 
+
 .loader-fill {
-    width: 0%;
     height: 100%;
-    background: white;
+    width: 0%;
+    background: rgba(255,255,255,.9);
     border-radius: inherit;
 }
 
+
 #loading-text {
     margin-top: 18px;
-    color: rgba(255,255,255,.85);
+
     font-size: 14px;
-    letter-spacing: .5px;
-    transition: opacity .35s ease;
-    user-select: none;
+    letter-spacing: .6px;
+
+    color: rgba(255,255,255,.7);
+
+    transition: opacity .4s ease;
+}
+
+
+/* bubbles */
+
+.bubbles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+
+.bubble {
+
+    position: absolute;
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    bottom: -20px;
+
+    animation:
+        floatUp linear forwards;
+
+    pointer-events: none;
+}
+
+
+
+@keyframes floatUp {
+
+    from {
+        transform:
+            translateY(0)
+            translateX(0);
+
+        opacity: 0;
+    }
+
+
+    10% {
+        opacity: 1;
+    }
+
+
+    70% {
+        opacity: .8;
+    }
+
+
+    to {
+
+        transform:
+            translateY(-60vh)
+            translateX(20px);
+
+        opacity: 0;
+    }
+
 }
