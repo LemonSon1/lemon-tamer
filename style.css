@@ -4,6 +4,12 @@
     box-sizing:border-box;
 }
 
+html,
+body{
+    width:100%;
+    height:100%;
+}
+
 body{
     background:#000;
     color:#fff;
@@ -11,7 +17,9 @@ body{
     overflow:hidden;
 }
 
-/* ---------------- Loader Screen ---------------- */
+/* ===============================
+   Loader Screen
+================================ */
 
 #loader-screen{
     position:fixed;
@@ -34,7 +42,12 @@ body{
     text-align:center;
 }
 
+/* ===============================
+   Loader
+================================ */
+
 .loader{
+
     width:340px;
     height:6px;
 
@@ -43,9 +56,11 @@ body{
 
     overflow:hidden;
 
+    transform-origin:center;
+
     transition:
-        transform .65s cubic-bezier(.2,.8,.2,1),
-        opacity .35s ease;
+        transform .65s cubic-bezier(.22,1,.36,1),
+        opacity .45s ease;
 }
 
 .loader:hover{
@@ -53,35 +68,45 @@ body{
 }
 
 .loader-fill{
+
     width:0%;
     height:100%;
 
     background:#fff;
+
     border-radius:999px;
+
+    /* Makes width changes look buttery smooth */
+    transition:width .08s cubic-bezier(.22,1,.36,1);
+
+    will-change:width;
 }
 
 #loading-text{
 
     margin-top:18px;
 
-    color:rgba(255,255,255,.75);
-
     font-size:14px;
 
     letter-spacing:.5px;
 
-    transition:opacity .3s ease;
+    color:rgba(255,255,255,.75);
+
+    user-select:none;
+
+    transition:opacity .35s ease;
 }
 
-
-/* ---------------- Bubbles ---------------- */
+/* ===============================
+   Bubble Background
+================================ */
 
 .bubbles{
     position:absolute;
     inset:0;
     overflow:hidden;
 
-    transition:opacity .5s ease;
+    transition:opacity .55s ease;
 }
 
 .bubble{
@@ -97,12 +122,13 @@ body{
     pointer-events:none;
 
     animation:floatUp linear forwards;
-}
 
+    will-change:transform,opacity;
+}
 
 @keyframes floatUp{
 
-    from{
+    0%{
         transform:
             translateY(0)
             translateX(0);
@@ -115,11 +141,10 @@ body{
     }
 
     60%{
-        opacity:.7;
+        opacity:.75;
     }
 
-    to{
-
+    100%{
         transform:
             translateY(-60vh)
             translateX(20px);
@@ -129,8 +154,9 @@ body{
 
 }
 
-
-/* ---------------- Exit Animation ---------------- */
+/* ===============================
+   Exit Animation
+================================ */
 
 .loader-exit .bubbles{
     opacity:0;
@@ -142,24 +168,25 @@ body{
 
 .loader-exit .loader{
 
-    transform-origin:center;
-
     transform:scaleX(0);
 
     opacity:0;
 }
 
-
-/* ---------------- Remove Loader ---------------- */
+/* ===============================
+   Remove Loader
+================================ */
 
 .loader-hidden{
 
     opacity:0;
+
     pointer-events:none;
 }
 
-
-/* ---------------- Website ---------------- */
+/* ===============================
+   Website
+================================ */
 
 #main-page{
 
@@ -173,7 +200,9 @@ body{
     opacity:0;
     visibility:hidden;
 
-    transition:opacity .8s ease;
+    transition:
+        opacity .8s ease,
+        visibility .8s;
 }
 
 .loader-hidden + #main-page{
@@ -182,16 +211,22 @@ body{
     visibility:visible;
 }
 
+/* ===============================
+   Demo Content
+================================ */
+
 .hero{
     text-align:center;
 }
 
 .hero h1{
     font-size:56px;
+    font-weight:600;
     margin-bottom:20px;
 }
 
 .hero p{
     color:#aaa;
     font-size:18px;
+    line-height:1.6;
 }
