@@ -1,35 +1,178 @@
+// =========================
+// Elements
+// =========================
+
+const fill = document.querySelector(".loader-fill");
+const text = document.getElementById("loading-text");
 const loaderScreen = document.getElementById("loader-screen");
-const loaderFill = document.querySelector(".loader-fill");
-const loadingText = document.getElementById("loading-text");
 const bubblesContainer = document.querySelector(".bubbles");
 
-const loadingMessages = [
+// =========================
+// Loading Messages
+// =========================
+
+const loadingPool = [
     "Initializing...",
     "Loading assets...",
     "Preparing interface...",
     "Optimizing experience...",
-    "Almost ready..."
+    "Loading components...",
+    "Connecting services...",
+    "Fetching resources...",
+    "Building interface...",
+    "Caching resources...",
+    "Generating UI...",
+    "Compiling modules...",
+    "Checking integrity...",
+    "Loading textures...",
+    "Rendering elements...",
+    "Applying configuration...",
+    "Syncing data...",
+    "Starting engine...",
+    "Verifying files...",
+    "Configuring workspace...",
+    "Loading animations...",
+    "Preparing visuals...",
+    "Linking modules...",
+    "Optimizing shaders...",
+    "Allocating memory...",
+    "Finalizing setup..."
 ];
 
-let progress = 0;
-let messageIndex = 0;
+function shuffle(array) {
 
-// -----------------------------
+    const arr = [...array];
+
+    for (let i = arr.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+
+const loadingTexts = shuffle(loadingPool).slice(0, 4);
+loadingTexts.push("Completed");
+
+text.textContent = loadingTexts[0];
+
+// =========================
+// Progress
+// =========================
+
+let progress = 0;
+let targetProgress = 0;
+
+let finished = false;
+let textFinished = false;
+
+function load() {
+
+    if (finished) return;
+
+    targetProgress +=
+        (0.03 + Math.pow(targetProgress / 100, 2) * 0.85) +
+        Math.random() * 0.04;
+
+    targetProgress = Math.min(targetProgress, 100);
+
+    progress += (targetProgress - progress) * 0.08;
+
+    if (!textFinished && progress > 99)
+        progress = 99;
+
+    fill.style.width = progress + "%";
+
+    requestAnimationFrame(load);
+}
+
+requestAnimationFrame(load);
+
+// =========================
+// Loading Text
+// =========================
+
+let index = 0;
+
+const TEXT_DELAY = 2200;
+
+const textInterval = setInterval(() => {
+
+    text.style.opacity = "0";
+
+    setTimeout(() => {
+
+        index++;
+
+        if (index >= loadingTexts.length) {
+
+            clearInterval(textInterval);
+
+            textFinished = true;
+
+            progress = 100;
+            targetProgress = 100;
+
+            fill.style.width = "100%";
+
+            finished = true;
+
+            finishLoader();
+
+            return;
+        }
+
+        text.textContent = loadingTexts[index];
+        text.style.opacity = "1";
+
+    }, 180);
+
+}, TEXT_DELAY);
+
+// =========================
+// Finish
+// =========================
+
+function finishLoader() {
+
+    setTimeout(() => {
+
+        loaderScreen.classList.add("loader-exit");
+
+        setTimeout(() => {
+
+            loaderScreen.classList.add("loader-hidden");
+
+            // window.location.href = "home.html";
+
+        }, 700);
+
+    }, 500);
+}
+
+// =========================
 // Bubble Generator
-// -----------------------------
+// =========================
+
 function createBubble() {
-    const bubble = document.createElement("div");
+
+    if (finished) return;
+
+    const bubble = document.createElement("span");
+
     bubble.className = "bubble";
 
-    const size = Math.random() * 14 + 6;
+    const size = Math.random() * 6 + 7;
 
-    bubble.style.width = `${size}px`;
-    bubble.style.height = `${size}px`;
+    bubble.style.width = size + "px";
+    bubble.style.height = size + "px";
 
-    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.left = Math.random() * 100 + "%";
 
-    bubble.style.animationDuration = `${Math.random() * 4 + 4}s`;
-    bubble.style.animationDelay = `${Math.random() * 0.5}s`;
+    bubble.style.animationDuration =
+        (Math.random() * 5 + 7) + "s";
 
     bubblesContainer.appendChild(bubble);
 
@@ -38,47 +181,14 @@ function createBubble() {
     });
 }
 
-const bubbleInterval = setInterval(createBubble, 180);
+const bubbleInterval = setInterval(() => {
 
-// -----------------------------
-// Loading Progress
-// -----------------------------
-function updateLoading() {
+    if (finished) {
 
-    progress += Math.random() * 6 + 1;
-
-    if (progress > 100) progress = 100;
-
-    loaderFill.style.width = `${progress}%`;
-
-    const targetIndex = Math.min(
-        Math.floor(progress / 25),
-        loadingMessages.length - 1
-    );
-
-    if (targetIndex !== messageIndex) {
-        messageIndex = targetIndex;
-        loadingText.textContent = loadingMessages[messageIndex];
-    }
-
-    if (progress >= 100) {
-
-        clearInterval(progressInterval);
         clearInterval(bubbleInterval);
-
-        loadingText.textContent = "Welcome";
-
-        loaderScreen.classList.add("loader-exit");
-
-        setTimeout(() => {
-            loaderScreen.classList.add("loader-hidden");
-        }, 650);
+        return;
     }
-}
 
-const progressInterval = setInterval(updateLoading, 120);
+    createBubble();
 
-// Create initial bubbles
-for (let i = 0; i < 20; i++) {
-    setTimeout(createBubble, i * 80);
-}
+}, 500);
