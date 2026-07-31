@@ -4,8 +4,7 @@
     box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
     width:100%;
     height:100%;
 }
@@ -17,70 +16,102 @@ body{
     overflow:hidden;
 }
 
-/* ===============================
-   Loader Screen
-================================ */
+/* ================= Loader ================= */
 
 #loader-screen{
     position:fixed;
     inset:0;
+    background:#000;
 
     display:flex;
     justify-content:center;
     align-items:center;
 
-    background:#000;
-
     z-index:9999;
 
-    transition:opacity .45s ease;
+    transition:opacity .5s ease;
 }
 
 .loader-wrapper{
     position:relative;
     z-index:2;
     text-align:center;
-}
 
-/* ===============================
-   Loader
-================================ */
+    transition:
+        opacity .55s ease,
+        transform .65s cubic-bezier(.22,1,.36,1);
+}
 
 .loader{
 
-    width:340px;
-    height:6px;
+    position:relative;
 
-    border:1px solid rgba(255,255,255,.75);
+    width:340px;
+    height:4px;
+
+    background:rgba(255,255,255,.10);
+
     border-radius:999px;
 
     overflow:hidden;
-
-    transform-origin:center;
-
-    transition:
-        transform .65s cubic-bezier(.22,1,.36,1),
-        opacity .45s ease;
-}
-
-.loader:hover{
-    transform:scaleX(1.05);
 }
 
 .loader-fill{
+
+    position:relative;
 
     width:0%;
     height:100%;
 
     background:#fff;
 
-    border-radius:999px;
+    border-radius:inherit;
 
-    /* Makes width changes look buttery smooth */
-    transition:width .08s cubic-bezier(.22,1,.36,1);
-
-    will-change:width;
+    box-shadow:
+        0 0 8px rgba(255,255,255,.18);
 }
+
+/* Hover sheen */
+
+.loader::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-35%;
+
+    width:35%;
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.35),
+            transparent
+        );
+
+    opacity:0;
+}
+
+.loader:hover::after{
+
+    opacity:1;
+
+    animation:sheen .9s ease;
+}
+
+@keyframes sheen{
+
+    to{
+        left:120%;
+    }
+
+}
+
+/* Text */
 
 #loading-text{
 
@@ -88,25 +119,21 @@ body{
 
     font-size:14px;
 
-    letter-spacing:.5px;
+    letter-spacing:.7px;
 
-    color:rgba(255,255,255,.75);
+    color:rgba(255,255,255,.72);
 
     user-select:none;
-
-    transition:opacity .35s ease;
 }
 
-/* ===============================
-   Bubble Background
-================================ */
+/* ================= Bubbles ================= */
 
 .bubbles{
     position:absolute;
     inset:0;
     overflow:hidden;
 
-    transition:opacity .55s ease;
+    transition:opacity .5s ease;
 }
 
 .bubble{
@@ -117,18 +144,17 @@ body{
 
     border-radius:50%;
 
-    border:1px solid rgba(255,255,255,.55);
-
-    pointer-events:none;
+    border:1px solid rgba(255,255,255,.45);
 
     animation:floatUp linear forwards;
 
-    will-change:transform,opacity;
+    pointer-events:none;
 }
 
 @keyframes floatUp{
 
-    0%{
+    from{
+
         transform:
             translateY(0)
             translateX(0);
@@ -137,14 +163,15 @@ body{
     }
 
     15%{
-        opacity:.9;
+        opacity:.8;
     }
 
-    60%{
-        opacity:.75;
+    65%{
+        opacity:.65;
     }
 
-    100%{
+    to{
+
         transform:
             translateY(-60vh)
             translateX(20px);
@@ -154,28 +181,19 @@ body{
 
 }
 
-/* ===============================
-   Exit Animation
-================================ */
+/* ================= Outro ================= */
 
 .loader-exit .bubbles{
-    opacity:0;
-}
-
-.loader-exit #loading-text{
-    opacity:0;
-}
-
-.loader-exit .loader{
-
-    transform:scaleX(0);
 
     opacity:0;
 }
 
-/* ===============================
-   Remove Loader
-================================ */
+.loader-exit .loader-wrapper{
+
+    opacity:0;
+
+    transform:scale(.92);
+}
 
 .loader-hidden{
 
@@ -184,9 +202,7 @@ body{
     pointer-events:none;
 }
 
-/* ===============================
-   Website
-================================ */
+/* ================= Website ================= */
 
 #main-page{
 
@@ -211,10 +227,6 @@ body{
     visibility:visible;
 }
 
-/* ===============================
-   Demo Content
-================================ */
-
 .hero{
     text-align:center;
 }
@@ -226,7 +238,6 @@ body{
 }
 
 .hero p{
-    color:#aaa;
+    color:#9a9a9a;
     font-size:18px;
-    line-height:1.6;
 }
