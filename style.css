@@ -54,6 +54,19 @@ body{
     border-radius:999px;
 
     overflow:hidden;
+
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease;
+}
+
+.loader:hover{
+
+    transform:scale(1.02);
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.18),
+        0 0 28px rgba(255,255,255,.08);
 }
 
 .loader-fill{
@@ -67,51 +80,21 @@ body{
 
     border-radius:inherit;
 
+    box-shadow:0 0 8px rgba(255,255,255,.18);
+
+    transition:
+        width .12s linear,
+        box-shadow .35s ease;
+}
+
+.loader:hover .loader-fill{
+
     box-shadow:
-        0 0 8px rgba(255,255,255,.18);
+        0 0 12px rgba(255,255,255,.45),
+        0 0 24px rgba(255,255,255,.18);
 }
 
-/* Hover sheen */
-
-.loader::after{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:-35%;
-
-    width:35%;
-    height:100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.35),
-            transparent
-        );
-
-    opacity:0;
-}
-
-.loader:hover::after{
-
-    opacity:1;
-
-    animation:sheen .9s ease;
-}
-
-@keyframes sheen{
-
-    to{
-        left:120%;
-    }
-
-}
-
-/* Text */
+/* ================= Text ================= */
 
 #loading-text{
 
@@ -124,6 +107,15 @@ body{
     color:rgba(255,255,255,.72);
 
     user-select:none;
+
+    transition:
+        opacity .35s ease,
+        transform .35s ease,
+        color .3s ease;
+}
+
+.loader-wrapper:hover #loading-text{
+    color:rgba(255,255,255,.95);
 }
 
 /* ================= Bubbles ================= */
@@ -184,7 +176,6 @@ body{
 /* ================= Outro ================= */
 
 .loader-exit .bubbles{
-
     opacity:0;
 }
 

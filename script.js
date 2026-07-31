@@ -39,11 +39,15 @@ const loadingPool = [
     "Finalizing setup..."
 ];
 
-function shuffle(array) {
+// =========================
+// Shuffle
+// =========================
+
+function shuffle(array){
 
     const arr = [...array];
 
-    for (let i = arr.length - 1; i > 0; i--) {
+    for(let i = arr.length - 1; i > 0; i--){
 
         const j = Math.floor(Math.random() * (i + 1));
 
@@ -53,13 +57,13 @@ function shuffle(array) {
     return arr;
 }
 
-const loadingTexts = shuffle(loadingPool).slice(0, 4);
+const loadingTexts = shuffle(loadingPool).slice(0,4);
 loadingTexts.push("Completed");
 
 text.textContent = loadingTexts[0];
 
 // =========================
-// Progress
+// Fake Progress
 // =========================
 
 let progress = 0;
@@ -68,19 +72,19 @@ let targetProgress = 0;
 let finished = false;
 let textFinished = false;
 
-function load() {
+function load(){
 
-    if (finished) return;
+    if(finished) return;
 
     targetProgress +=
-        (0.03 + Math.pow(targetProgress / 100, 2) * 0.85) +
+        (0.03 + Math.pow(targetProgress / 100,2) * 0.85) +
         Math.random() * 0.04;
 
-    targetProgress = Math.min(targetProgress, 100);
+    targetProgress = Math.min(targetProgress,100);
 
     progress += (targetProgress - progress) * 0.08;
 
-    if (!textFinished && progress > 99)
+    if(!textFinished && progress > 99)
         progress = 99;
 
     fill.style.width = progress + "%";
@@ -101,12 +105,13 @@ const TEXT_DELAY = 2200;
 const textInterval = setInterval(() => {
 
     text.style.opacity = "0";
+    text.style.transform = "translateY(-8px)";
 
     setTimeout(() => {
 
         index++;
 
-        if (index >= loadingTexts.length) {
+        if(index >= loadingTexts.length){
 
             clearInterval(textInterval);
 
@@ -117,6 +122,10 @@ const textInterval = setInterval(() => {
 
             fill.style.width = "100%";
 
+            text.textContent = "Completed";
+            text.style.opacity = "1";
+            text.style.transform = "translateY(0)";
+
             finished = true;
 
             finishLoader();
@@ -125,17 +134,23 @@ const textInterval = setInterval(() => {
         }
 
         text.textContent = loadingTexts[index];
-        text.style.opacity = "1";
 
-    }, 180);
+        requestAnimationFrame(() => {
 
-}, TEXT_DELAY);
+            text.style.opacity = "1";
+            text.style.transform = "translateY(0)";
+
+        });
+
+    },180);
+
+},TEXT_DELAY);
 
 // =========================
 // Finish
 // =========================
 
-function finishLoader() {
+function finishLoader(){
 
     setTimeout(() => {
 
@@ -147,18 +162,19 @@ function finishLoader() {
 
             // window.location.href = "home.html";
 
-        }, 700);
+        },700);
 
-    }, 500);
+    },700);
+
 }
 
 // =========================
 // Bubble Generator
 // =========================
 
-function createBubble() {
+function createBubble(){
 
-    if (finished) return;
+    if(finished) return;
 
     const bubble = document.createElement("span");
 
@@ -179,16 +195,18 @@ function createBubble() {
     bubble.addEventListener("animationend", () => {
         bubble.remove();
     });
+
 }
 
 const bubbleInterval = setInterval(() => {
 
-    if (finished) {
+    if(finished){
 
         clearInterval(bubbleInterval);
         return;
+
     }
 
     createBubble();
 
-}, 500);
+},500);
