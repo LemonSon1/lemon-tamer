@@ -28,7 +28,7 @@ function load() {
         // Starts faster and gradually slows down
         const remaining = 100 - progress;
 
-        progress += Math.max(remaining * 0.006, 0.05) + Math.random() * 0.12;
+        progress += (0.05 + (progress / 100) * 0.55) + Math.random() * 0.08;
 
         if (progress >= 100) {
 
