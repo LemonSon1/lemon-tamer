@@ -1,33 +1,86 @@
 // =========================
-// Customizable loading text
+// Fake Loading Screen
 // =========================
-
-const loadingTexts = [
-    "Initializing...",
-    "Loading assets...",
-    "Preparing interface...",
-    "Optimizing experience...",
-    "Almost ready..."
-];
 
 const fill = document.querySelector(".loader-fill");
 const text = document.getElementById("loading-text");
 const loaderScreen = document.getElementById("loader-screen");
 const bubblesContainer = document.querySelector(".bubbles");
 
-// =========================
-// Smooth Fake Loader
-// =========================
+// ===========================================
+// Large Pool of Loading Messages
+// (Add as many as you want here)
+// ===========================================
+
+const loadingPool = [
+    "Initializing...",
+    "Loading assets...",
+    "Preparing interface...",
+    "Optimizing experience...",
+    "Loading components...",
+    "Connecting services...",
+    "Fetching resources...",
+    "Building interface...",
+    "Caching resources...",
+    "Generating UI...",
+    "Compiling modules...",
+    "Checking integrity...",
+    "Loading textures...",
+    "Rendering elements...",
+    "Applying configuration...",
+    "Syncing data...",
+    "Starting engine...",
+    "Verifying files...",
+    "Configuring workspace...",
+    "Loading animations...",
+    "Preparing visuals...",
+    "Linking modules...",
+    "Optimizing shaders...",
+    "Allocating memory...",
+    "Finalizing setup..."
+];
+
+// ===========================================
+// Randomly choose 4 messages
+// ===========================================
+
+function shuffle(array) {
+
+    const arr = [...array];
+
+    for (let i = arr.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    return arr;
+}
+
+const loadingTexts = shuffle(loadingPool).slice(0, 4);
+
+// Always show this last
+loadingTexts.push("Completed");
+
+text.textContent = loadingTexts[0];
+
+// ===========================================
+// Loader
+// ===========================================
 
 let progress = 0;
 let targetProgress = 0;
+
 let finished = false;
+let textFinished = false;
 
 function load() {
 
-    if (finished) return;
+    if (finished)
+        return;
 
-    // Accelerates gradually
+    // Smooth acceleration
     targetProgress +=
         (0.03 + Math.pow(targetProgress / 100, 2) * 0.85)
         + Math.random() * 0.04;
@@ -37,56 +90,63 @@ function load() {
     // Smooth interpolation
     progress += (targetProgress - progress) * 0.08;
 
+    // Don't finish until all messages are shown
+    if (!textFinished && progress > 99)
+        progress = 99;
+
     fill.style.width = progress + "%";
-
-    if (targetProgress >= 100 && progress >= 99.7) {
-
-        progress = 100;
-        fill.style.width = "100%";
-
-        finished = true;
-
-        finishLoader();
-
-        return;
-    }
 
     requestAnimationFrame(load);
 }
 
 requestAnimationFrame(load);
 
-// =========================
-// Loading Text Rotation
-// =========================
+// ===========================================
+// Loading Text
+// ===========================================
 
-let textIndex = 0;
+let index = 0;
+
+const TEXT_DELAY = 2200;
 
 const textInterval = setInterval(() => {
-
-    if (finished) return;
 
     text.style.opacity = 0;
 
     setTimeout(() => {
 
-        textIndex = (textIndex + 1) % loadingTexts.length;
+        index++;
 
-        text.textContent = loadingTexts[textIndex];
+        if (index >= loadingTexts.length) {
 
+            clearInterval(textInterval);
+
+            textFinished = true;
+
+            progress = 100;
+            targetProgress = 100;
+
+            fill.style.width = "100%";
+
+            finished = true;
+
+            finishLoader();
+
+            return;
+        }
+
+        text.textContent = loadingTexts[index];
         text.style.opacity = 1;
 
     }, 180);
 
-}, 2500);
+}, TEXT_DELAY);
 
-// =========================
+// ===========================================
 // Finish Animation
-// =========================
+// ===========================================
 
 function finishLoader() {
-
-    clearInterval(textInterval);
 
     setTimeout(() => {
 
@@ -96,7 +156,7 @@ function finishLoader() {
 
             loaderScreen.classList.add("loader-hidden");
 
-            // To open another page instead:
+            // If you want another page:
             // window.location.href = "home.html";
 
         }, 700);
@@ -104,15 +164,17 @@ function finishLoader() {
     }, 500);
 }
 
-// =========================
+// ===========================================
 // Bubble Generator
-// =========================
+// ===========================================
 
 function createBubble() {
 
-    if (finished) return;
+    if (finished)
+        return;
 
     const bubble = document.createElement("span");
+
     bubble.className = "bubble";
 
     const size = Math.random() * 6 + 7;
@@ -136,8 +198,10 @@ function createBubble() {
 const bubbleInterval = setInterval(() => {
 
     if (finished) {
+
         clearInterval(bubbleInterval);
         return;
+
     }
 
     createBubble();
