@@ -3,23 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loader</title>
+    <title>Minimal Website</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="bubbles"></div>
+    <!-- =========================
+         Loader Screen
+    ========================== -->
+    <div id="loader-screen">
 
-    <div class="loader-wrapper">
+        <div class="bubbles"></div>
 
-        <div class="loader">
-            <div class="loader-fill"></div>
+        <div class="loader-wrapper">
+
+            <div class="loader">
+                <div class="loader-fill"></div>
+            </div>
+
+            <p id="loading-text">
+                Initializing...
+            </p>
+
         </div>
-
-        <p id="loading-text">Initializing...</p>
 
     </div>
 
+
+    <!-- =========================
+         Main Website
+    ========================== -->
+    <main id="main-page">
+
+        <section class="hero">
+
+            <h1>Your Website</h1>
+
+            <p>
+                This is where your website starts after the loader animation.
+            </p>
+
+        </section>
+
+    </main>
+
+
     <script src="script.js"></script>
+
 </body>
 </html>
