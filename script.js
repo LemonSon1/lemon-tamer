@@ -13,45 +13,51 @@ const loadingTexts = [
 const fill = document.querySelector(".loader-fill");
 const text = document.getElementById("loading-text");
 const loaderScreen = document.getElementById("loader-screen");
+const bubblesContainer = document.querySelector(".bubbles");
+
+// =========================
+// Smooth Fake Loader
+// =========================
 
 let progress = 0;
+let targetProgress = 0;
 let finished = false;
-
-// =========================
-// Smooth fake loader
-// =========================
 
 function load() {
 
-    if (!finished) {
+    if (finished) return;
 
-        // Starts faster and gradually slows down
-        const remaining = 100 - progress;
+    // Accelerates gradually
+    targetProgress +=
+        (0.03 + Math.pow(targetProgress / 100, 2) * 0.85)
+        + Math.random() * 0.04;
 
-        progress += (0.05 + (progress / 100) * 0.55) + Math.random() * 0.08;
+    targetProgress = Math.min(targetProgress, 100);
 
-        if (progress >= 100) {
+    // Smooth interpolation
+    progress += (targetProgress - progress) * 0.08;
 
-            progress = 100;
-            finished = true;
+    fill.style.width = progress + "%";
 
-            fill.style.width = "100%";
+    if (targetProgress >= 100 && progress >= 99.7) {
 
-            finishLoader();
+        progress = 100;
+        fill.style.width = "100%";
 
-        } else {
+        finished = true;
 
-            fill.style.width = progress + "%";
+        finishLoader();
 
-            requestAnimationFrame(load);
-        }
+        return;
     }
+
+    requestAnimationFrame(load);
 }
 
 requestAnimationFrame(load);
 
 // =========================
-// Rotate loading text
+// Loading Text Rotation
 // =========================
 
 let textIndex = 0;
@@ -65,7 +71,9 @@ const textInterval = setInterval(() => {
     setTimeout(() => {
 
         textIndex = (textIndex + 1) % loadingTexts.length;
+
         text.textContent = loadingTexts[textIndex];
+
         text.style.opacity = 1;
 
     }, 180);
@@ -73,24 +81,22 @@ const textInterval = setInterval(() => {
 }, 2500);
 
 // =========================
-// Finish animation
+// Finish Animation
 // =========================
 
 function finishLoader() {
 
     clearInterval(textInterval);
 
-    // small pause at 100%
     setTimeout(() => {
 
         loaderScreen.classList.add("loader-exit");
 
-        // remove loader after shrink animation
         setTimeout(() => {
 
             loaderScreen.classList.add("loader-hidden");
 
-            // Optional:
+            // To open another page instead:
             // window.location.href = "home.html";
 
         }, 700);
@@ -99,7 +105,7 @@ function finishLoader() {
 }
 
 // =========================
-// Bubble generator
+// Bubble Generator
 // =========================
 
 function createBubble() {
@@ -107,7 +113,6 @@ function createBubble() {
     if (finished) return;
 
     const bubble = document.createElement("span");
-
     bubble.className = "bubble";
 
     const size = Math.random() * 6 + 7;
@@ -120,9 +125,7 @@ function createBubble() {
     bubble.style.animationDuration =
         (Math.random() * 5 + 7) + "s";
 
-    document
-        .querySelector(".bubbles")
-        .appendChild(bubble);
+    bubblesContainer.appendChild(bubble);
 
     bubble.addEventListener("animationend", () => {
         bubble.remove();
@@ -132,9 +135,11 @@ function createBubble() {
 
 const bubbleInterval = setInterval(() => {
 
-    if (!finished)
-        createBubble();
-    else
+    if (finished) {
         clearInterval(bubbleInterval);
+        return;
+    }
+
+    createBubble();
 
 }, 500);
