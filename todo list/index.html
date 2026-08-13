@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Todo App</title>
+
+    <!-- Source Sans Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+    <div class="app" id="app">
+
+        <!-- =====================
+             Add Todo
+        ====================== -->
+
+        <form class="form" v-on:submit="addTodo">
+
+            <input class="input form__input" type="text" v-model="inputVal" placeholder="Add a task..."
+                autocomplete="off" aria-label="Todo">
+
+            <button class="btn form__submit-btn" type="submit">
+                Add
+            </button>
+
+        </form>
+
+
+        <!-- =====================
+             Todo List
+        ====================== -->
+
+        <transition-group tag="ol" name="list" class="todo-list">
+
+            <li class="todo-list__item" v-bind:class="{ complete: todo.complete }" v-bind:key="todo.id"
+                v-for="todo in filteredTodos">
+
+                <!-- Todo text -->
+
+                <button class="todo-list__item-content" type="button" v-on:click="toggleTodo(todo)">
+                    {{ todo.text }}
+                </button>
+
+
+                <!-- Complete / Delete -->
+
+                <button class="btn todo-list__item-remove" type="button" v-on:click="deleteTodo(todo)"
+                    v-bind:aria-label="
+                        todo.complete
+                            ? 'Delete todo'
+                            : 'Complete todo'
+                    ">
+
+                    <i class="fa" v-bind:class="
+                            todo.complete
+                                ? 'fa-check'
+                                : 'fa-times'
+                        "></i>
+
+                </button>
+
+            </li>
+
+        </transition-group>
+
+
+        <!-- =====================
+             Filters
+        ====================== -->
+
+        <div class="filters">
+
+            <button class="btn filters__btn filters__btn--all" type="button" v-on:click="filterTodos('all')">
+                All
+            </button>
+
+
+            <button class="btn filters__btn filters__btn--complete" type="button" v-on:click="filterTodos('complete')">
+                Complete
+            </button>
+
+
+            <button class="btn filters__btn filters__btn--incomplete" type="button"
+                v-on:click="filterTodos('incomplete')">
+                Incomplete
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================
+         Vue 2
+    ====================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+
+    <!-- =====================
+         Your JavaScript
+    ====================== -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
