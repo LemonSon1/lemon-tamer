@@ -1,0 +1,146 @@
+:root {
+    --paper: #e9ebf2;
+    --ink: #16181f;
+    --fill: #4b5bd6;
+    --done: #37c39a;
+    --muted: #6d7385;
+    --pct: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    -webkit-font-smoothing: antialiased;
+}
+
+.timer {
+    width: min(560px, 100%);
+    display: grid;
+    gap: 20px;
+    justify-items: center;
+}
+
+.eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s ease;
+}
+
+/* The stage is the timer: colour drains out of it as the clock runs down. */
+.stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(22, 24, 31, 0.14);
+    border-radius: 18px;
+    overflow: hidden;
+    background: transparent;
+}
+
+.fill {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: var(--pct);
+    background: var(--fill);
+    transition: background-color 0.4s ease;
+}
+
+.digits {
+    position: relative;
+    font-size: clamp(38px, 12.5vw, 78px);
+    font-weight: 200;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+}
+
+/* Second copy of the digits, clipped to the fill, so the numerals invert
+     exactly where the colour crosses them. */
+.digits .over {
+    position: absolute;
+    inset: 0;
+    color: var(--paper);
+    clip-path: inset(calc(100% - var(--pct)) 0 0 0);
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid rgba(22, 24, 31, 0.22);
+    border-radius: 999px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+button:hover {
+    border-color: var(--ink);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--fill);
+    outline-offset: 3px;
+}
+
+button.primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+}
+
+.hint {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+}
+
+.hint code {
+    color: var(--ink);
+}
+
+body.done {
+    --fill: var(--done);
+}
+
+body.done .eyebrow {
+    color: var(--done);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

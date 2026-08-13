@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@200;300;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+    <main class="timer">
+        <p class="eyebrow" id="label">5 minute timer</p>
+
+        <div class="stage">
+            <div class="fill" aria-hidden="true"></div>
+            <div class="digits">
+                <span id="base">05:00</span>
+                <span class="over" id="over" aria-hidden="true">05:00</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="primary" id="toggle">Start</button>
+            <button id="reset">Reset</button>
+        </div>
+
+        <p class="hint" id="hint">
+            Set the time in theee URL —
+            <code>?h=1&amp;m=30</code>
+            . Add
+            <code>&amp;autostart</code>
+            to start on load.
+        </p>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+
+</html>
