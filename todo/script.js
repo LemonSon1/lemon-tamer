@@ -1,3 +1,5 @@
+const STORAGE_KEY = "kk-todo-app";
+
 class Todo {
     constructor({
         title = "Todo App",
@@ -8,9 +10,12 @@ class Todo {
     } = {}) {
         this.nodes = {};
         this.title = title;
-        this.data = data;
-        this.filteredData = data;
-        this.count = data.length;
+
+        // Load saved todos, otherwise use the default data
+        this.data = this.loadData(data);
+
+        this.filteredData = this.data;
+        this.count = this.data.length;
 
         this.addTask = this.addTask.bind(this);
         this.deleteTask = this.deleteTask.bind(this);
@@ -53,6 +58,41 @@ class Todo {
 
 
     /* =========================
+       LocalStorage
+    ========================= */
+
+    loadData(defaultData) {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+
+            if (saved) {
+                const parsed = JSON.parse(saved);
+
+                if (Array.isArray(parsed)) {
+                    return parsed;
+                }
+            }
+        } catch (error) {
+            console.error("Could not load todos:", error);
+        }
+
+        return defaultData;
+    }
+
+
+    saveData() {
+        try {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(this.data)
+            );
+        } catch (error) {
+            console.error("Could not save todos:", error);
+        }
+    }
+
+
+    /* =========================
        Element Creator
     ========================= */
 
@@ -91,7 +131,7 @@ class Todo {
 
 
     /* =========================
-       View Transition Helper
+       View Transition
     ========================= */
 
     startTransition(callback) {
@@ -104,7 +144,7 @@ class Todo {
 
 
     /* =========================
-       Update Task Count
+       Count
     ========================= */
 
     updateCount() {
@@ -118,7 +158,7 @@ class Todo {
 
 
     /* =========================
-       Event Binder
+       Events
     ========================= */
 
     eventBinder(el, event, action, api = false) {
@@ -159,20 +199,22 @@ class Todo {
 
         const inputValue = this.nodes.input.value.trim();
 
-        const taskName =
-            inputValue.length > 0
-                ? inputValue
-                : name;
+        if (!inputValue) {
+            return;
+        }
 
         const newTask = {
             id,
-            name: taskName,
+            name: inputValue || name,
             completed
         };
 
         this.nodes.input.value = "";
 
         this.data.push(newTask);
+
+        // SAVE
+        this.saveData();
 
         this.listUI(this.data);
 
@@ -187,7 +229,7 @@ class Todo {
 
 
     /* =========================
-       Filter Tasks
+       Filter
     ========================= */
 
     filterData(e, param = null, value = null) {
@@ -240,7 +282,7 @@ class Todo {
 
 
     /* =========================
-       Toggle Task Status
+       Toggle Status
     ========================= */
 
     toggleStatus(e, id = null) {
@@ -253,10 +295,13 @@ class Todo {
                 );
 
 
-        const updatedData = this.data.map(task => {
+        this.data = this.data.map(task => {
 
             if (task.id === taskId) {
-                task.completed = !task.completed;
+                return {
+                    ...task,
+                    completed: !task.completed
+                };
             }
 
             return task;
@@ -264,7 +309,8 @@ class Todo {
         });
 
 
-        this.data = updatedData;
+        // SAVE
+        this.saveData();
 
         this.onStatusChanged(taskId);
 
@@ -275,7 +321,7 @@ class Todo {
 
 
     /* =========================
-       Delete Task
+       Delete
     ========================= */
 
     deleteTask(e, id = null) {
@@ -288,12 +334,13 @@ class Todo {
                 );
 
 
-        const updatedData = this.data.filter(
+        this.data = this.data.filter(
             task => task.id !== taskId
         );
 
 
-        this.data = updatedData;
+        // SAVE
+        this.saveData();
 
         this.onDeleted(taskId);
 
@@ -309,16 +356,12 @@ class Todo {
 
     generalUI() {
 
-        /* App */
-
         this.nodes.app = this.elementCreator({
             attributes: {
                 class: "app"
             }
         });
 
-
-        /* Header */
 
         this.nodes.header = this.elementCreator({
             attributes: {
@@ -328,8 +371,6 @@ class Todo {
             container: this.nodes.app
         });
 
-
-        /* Title */
 
         this.nodes.title = this.elementCreator({
             type: "h1",
@@ -344,8 +385,6 @@ class Todo {
         });
 
 
-        /* Task List */
-
         this.nodes.list = this.elementCreator({
             attributes: {
                 class: "task-list"
@@ -355,7 +394,7 @@ class Todo {
         });
 
 
-        /* Footer */
+        /* Made With Footer */
 
         this.nodes.footer = this.elementCreator({
             type: "p",
@@ -370,8 +409,6 @@ class Todo {
         });
 
 
-        /* Tools */
-
         this.nodes.tools = this.elementCreator({
             attributes: {
                 class: "task-tools"
@@ -380,8 +417,6 @@ class Todo {
             container: this.nodes.header
         });
 
-
-        /* Form */
 
         this.nodes.form = this.elementCreator({
 
@@ -397,7 +432,6 @@ class Todo {
                         e.preventDefault();
                         this.addTask();
                     },
-
                     api: true
                 }
             },
@@ -405,8 +439,6 @@ class Todo {
             container: this.nodes.header
         });
 
-
-        /* Count */
 
         this.nodes.count = this.elementCreator({
 
@@ -423,8 +455,6 @@ class Todo {
         });
 
 
-        /* Filters */
-
         this.nodes.filters = this.elementCreator({
 
             attributes: {
@@ -437,7 +467,7 @@ class Todo {
 
 
     /* =========================
-       Form UI
+       Form
     ========================= */
 
     formUI() {
@@ -468,20 +498,13 @@ class Todo {
                 type: "submit"
             },
 
-            events: {
-                click: {
-                    action: this.addTask,
-                    api: false
-                }
-            },
-
             container: this.nodes.form
         });
     }
 
 
     /* =========================
-       Filter UI
+       Filters
     ========================= */
 
     filterUI(filterTypes = this.filterTypes) {
@@ -532,7 +555,7 @@ class Todo {
 
 
     /* =========================
-       Task List UI
+       Task List
     ========================= */
 
     listUI(data = this.data) {
@@ -543,41 +566,30 @@ class Todo {
 
 
             if (data.length === 0) {
-
                 this.emptyListUI();
-
                 return;
-
             }
 
 
             data.forEach(task => {
 
-                /* Task Item */
-
                 const item = this.elementCreator({
 
                     attributes: {
-
                         class:
                             `task-item${task.completed ? " is-completed" : ""}`
-
                     },
 
                     container: this.nodes.list
                 });
 
 
-                /* Checkbox */
-
                 this.elementCreator({
 
                     type: "input",
 
                     attributes: {
-
                         class: "task-status",
-
                         type: "checkbox",
 
                         checked:
@@ -589,19 +601,15 @@ class Todo {
                     },
 
                     events: {
-
                         change: {
                             action: this.toggleStatus,
                             api: true
                         }
-
                     },
 
                     container: item
                 });
 
-
-                /* Task Name */
 
                 this.elementCreator({
 
@@ -610,15 +618,12 @@ class Todo {
                     markup: task.name,
 
                     attributes: {
-
                         class: "task-name"
                     },
 
                     container: item
                 });
 
-
-                /* Delete */
 
                 this.elementCreator({
 
@@ -627,23 +632,17 @@ class Todo {
                     markup: "",
 
                     attributes: {
-
                         class: "task-delete",
-
                         "data-id": task.id,
-
                         type: "button",
-
                         "aria-label": `Delete ${task.name}`
                     },
 
                     events: {
-
                         click: {
                             action: this.deleteTask,
                             api: true
                         }
-
                     },
 
                     container: item
@@ -670,65 +669,72 @@ class Todo {
         this.filterUI();
 
         this.nodes.input.focus();
-
     }
 }
 
 
 /* =========================
-   Starting Tasks
+   Default Tasks
 ========================= */
 
 const todoList = [
-
     {
         id: -1,
         name: "Morning walk",
         completed: true
     },
-
     {
         id: -2,
         name: "Meeting with Holden Caulfield",
         completed: true
     },
-
     {
         id: -3,
         name: "Call Alper Kamu",
         completed: false
     },
-
     {
         id: -4,
         name: "Book flight to Hungary",
         completed: false
     },
-
     {
         id: -5,
         name: "Blog about CSS box model",
         completed: true
     }
-
 ];
 
 
 /* =========================
-   Create Todo App
+   Create App
 ========================= */
 
 const TodoApp = new Todo({
-
     title: new Date().toDateString(),
-
     data: todoList
-
 });
 
 
 /* =========================
-   Initialize
+   Callbacks
+========================= */
+
+TodoApp.onAdded = task => {
+    console.log("Added", task);
+};
+
+TodoApp.onDeleted = id => {
+    console.log("Deleted, id:", id);
+};
+
+TodoApp.onStatusChanged = id => {
+    console.log("Status changed, id:", id);
+};
+
+
+/* =========================
+   Start
 ========================= */
 
 TodoApp.init();
