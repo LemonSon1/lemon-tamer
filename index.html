@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#101827">
+    <title>Muave Sync — Global Timing</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b1220;
+            --panel: #121e30;
+            --line: #26364d;
+            --muted: #9aabc2;
+            --text: #f3f6fb;
+            --accent: #66e3c4;
+            --hot: #ffcb70
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(ellipse at top, #1b3046 0, var(--bg) 55%);
+            color: var(--text);
+            font: 16px/1.45 system-ui, Segoe UI, Arial, sans-serif;
+            min-height: 100vh
+        }
+
+        main {
+            width: min(760px, 100%);
+            margin: auto;
+            padding: 28px 18px 48px
+        }
+
+        header {
+            text-align: center;
+            margin: 10px 0 24px
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 3.2rem);
+            letter-spacing: .08em;
+            margin: 0
+        }
+
+        header p {
+            color: var(--muted);
+            margin: 6px 0
+        }
+
+        .panel {
+            background: linear-gradient(145deg, #17263a, #101a2a);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 20px;
+            margin: 14px 0;
+            box-shadow: 0 12px 35px #0004
+        }
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: .9rem
+        }
+
+        .pill {
+            border: 1px solid #276b60;
+            color: var(--accent);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-weight: 700;
+            font-size: .78rem
+        }
+
+        .clock {
+            text-align: center;
+            font-size: clamp(3.4rem, 13vw, 6rem);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: .04em;
+            font-weight: 750;
+            margin: 12px 0 0
+        }
+
+        .sub {
+            text-align: center;
+            color: var(--muted);
+            font-size: .9rem
+        }
+
+        .slotgrid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 20px 0 8px
+        }
+
+        .slot {
+            background: #1c2d42;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            padding: 13px 5px;
+            text-align: center;
+            min-width: 0
+        }
+
+        .slot.active {
+            border-color: var(--accent);
+            background: #174137;
+            box-shadow: 0 0 0 2px #66e3c433
+        }
+
+        .slot strong {
+            display: block;
+            font-size: 1.2rem
+        }
+
+        .slot small {
+            display: block;
+            color: var(--muted);
+            font-size: .72rem;
+            margin-top: 4px
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: 6px
+        }
+
+        input {
+            width: 100%;
+            background: #0b1422;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font: inherit
+        }
+
+        button {
+            border: 0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font: 700 1rem system-ui;
+            cursor: pointer
+        }
+
+        .primary {
+            background: var(--accent);
+            color: #06251e
+        }
+
+        .secondary {
+            background: #26374d;
+            color: var(--text)
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px
+        }
+
+        .actions button {
+            flex: 1
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: .88rem
+        }
+
+        .next {
+            color: var(--hot);
+            font-weight: 700
+        }
+
+        ol {
+            padding-left: 22px
+        }
+
+        li {
+            margin: 7px 0
+        }
+
+        footer {
+            text-align: center;
+            color: #71839c;
+            font-size: .78rem;
+            margin-top: 24px
+        }
+
+        @media(max-width:430px) {
+            .slotgrid {
+                gap: 5px
+            }
+
+            .slot {
+                padding: 10px 2px
+            }
+
+            .slot small {
+                font-size: .65rem
+            }
+
+            .controls {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <header>
+            <h1>MUAVE SYNC</h1>
+            <p>One shared UTC-based rhythm for your whole team</p>
+        </header>
+
+        <section class="panel">
+            <div class="status"><span class="pill" id="syncState">UTC schedule</span><span id="utc">UTC --:--:--</span>
+            </div>
+            <div class="clock" id="countdown">--.-</div>
+            <div class="sub" id="phase">Seconds until next Muave signal</div>
+            <div class="slotgrid" id="slots">
+                <div class="slot"><strong>1</strong><small>MUAVE 1</small></div>
+                <div class="slot"><strong>2</strong><small>MUAVE 2</small></div>
+                <div class="slot"><strong>3</strong><small>MUAVE 3</small></div>
+                <div class="slot"><strong>4</strong><small>MUAVE 4</small></div>
+                <div class="slot"><strong>5</strong><small>MUAVE 5</small></div>
+            </div>
+            <div class="sub" id="current">Waiting for the next signal</div>
+        </section>
+
+        <section class="panel">
+            <h2 style="margin:0 0 14px">Timing settings</h2>
+            <div class="controls">
+                <div><label for="cycle">Full cycle (seconds)</label><input id="cycle" type="number" min="5" max="3600"
+                        step=".1" value="28"></div>
+                <div><label for="signals">Signals per cycle</label><input id="signals" type="number" min="2" max="20"
+                        step="1" value="5"></div>
+            </div>
+            <p class="note" id="interval">Five equal slots = one signal every 5.6 seconds.</p>
+            <div class="actions"><button class="primary" id="start">ENABLE SOUND</button><button class="secondary"
+                    id="mute">MUTE</button></div>
+            <p class="note" id="soundInfo">Tap Enable Sound once on each device. Browsers require a user gesture before
+                playing audio.</p>
+        </section>
+
+        <section class="panel">
+            <h2 style="margin:0 0 8px">How the team uses it</h2>
+            <ol>
+                <li>Everyone opens this same page and taps <b>Enable Sound</b>.</li>
+                <li>Signal 1 through 5 are spaced evenly across the cycle. Each signal is a shared team cue, not
+                    permanently assigned to one person.</li>
+                <li>A player can cover up to three cues with their available Muaves; teammates can cover the remaining
+                    cues. Agree on assignments in voice chat.</li>
+            </ol>
+            <p class="note">Default setting: a 28-second Muave cooldown, divided into five equal intervals (5.6
+                seconds). Change the cycle if your in-game timing requires a different interval.</p>
+        </section>
+        <footer>Schedule is anchored to the device's UTC clock. Keep the page open and the device awake for reliable
+            audio.</footer>
+    </main>
+    <script>
+        (() => {
+            const $ = id => document.getElementById(id);
+            const cycleInput = $('cycle'), signalsInput = $('signals');
+            let audio = null, enabled = false, muted = false, lastSignalKey = '', lastSlot = -1;
+            function settings() {
+                let c = Number(cycleInput.value), n = Math.floor(Number(signalsInput.value));
+                if (!Number.isFinite(c) || c < 5 || c > 3600) c = 22;
+                if (!Number.isFinite(n) || n < 2 || n > 20) n = 5;
+                return { cycle: c, n, interval: c / n };
+            }
+            function beep(slot) {
+                if (!enabled || muted || !audio) return;
+                const t = audio.currentTime, osc = audio.createOscillator(), gain = audio.createGain();
+                osc.type = 'sine'; osc.frequency.value = slot === 0 ? 1046 : 880;
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.exponentialRampToValueAtTime(.22, t + .008);
+                gain.gain.exponentialRampToValueAtTime(.0001, t + .19);
+                osc.connect(gain); gain.connect(audio.destination); osc.start(t); osc.stop(t + .2);
+            }
+            function tick() {
+                const now = Date.now(), utc = new Date(now);
+                $('utc').textContent = 'UTC ' + utc.toISOString().slice(11, 19);
+                const { cycle, n, interval } = settings();
+                $('interval').textContent = `${n} equal slots = one signal every ${interval.toFixed(2)} seconds.`;
+                const cycleMs = cycle * 1000, slotMs = cycleMs / n;
+                const elapsed = ((now % cycleMs) + cycleMs) % cycleMs;
+                const slot = Math.floor(elapsed / slotMs);
+                const within = elapsed - slot * slotMs;
+                const remain = (slotMs - within) / 1000;
+                $('countdown').textContent = remain.toFixed(1);
+                $('phase').textContent = `Next signal: ${slot === n - 1 ? 1 : slot + 2} · interval ${interval.toFixed(2)}s`;
+                $('current').innerHTML = `Current cue: <span class="next">MUAVE ${slot + 1}</span>`;
+                [...$('slots').children].forEach((el, i) => el.classList.toggle('active', i === slot));
+                const key = `${Math.floor(now / cycleMs)}-${slot}`;
+                if (within < 180 && key !== lastSignalKey) { lastSignalKey = key; beep(slot); }
+                if (slot !== lastSlot) lastSlot = slot;
+            }
+            $('start').addEventListener('click', async () => {
+                try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') await audio.resume(); enabled = true; muted = false; $('syncState').textContent = 'SOUND ENABLED'; $('soundInfo').textContent = 'Sound is enabled on this device. Keep this tab open.'; $('mute').textContent = 'MUTE'; }
+                catch (e) { $('soundInfo').textContent = 'Audio could not start. Check browser sound permissions.'; }
+            });
+            $('mute').addEventListener('click', () => { muted = !muted; $('mute').textContent = muted ? 'UNMUTE' : 'MUTE'; });
+            [cycleInput, signalsInput].forEach(el => el.addEventListener('input', () => { lastSignalKey = ''; tick(); }));
+            setInterval(tick, 25); tick();
+        })();
+    </script>
+</body>
+
+</html>
